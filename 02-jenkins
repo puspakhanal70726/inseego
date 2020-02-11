@@ -1,0 +1,345 @@
+Description	
+Build to run npm on magenta src.zip
+[Plain text] Preview 	
+ 	JIRA site		
+Block build when upstream project is building - final project	Help for feature: Block build when upstream project is building - final project
+Block build when downstream project is building - final project	Help for feature: Block build when downstream project is building - final project
+Discard old builds	Help for feature: Discard old builds
+ 	Strategy		
+ 	Days to keep builds	
+if not empty, build records are only kept up to this number of days	
+ 	Max # of builds to keep	
+10
+if not empty, only up to this number of build records are kept	
+ 
+Advanced...
+GitHub project	
+ 	GitLab Connection		
+Permission to Copy Artifact	
+This build requires lockable resources	
+Restrict build execution causes	Help for feature: Restrict build execution causes
+This project is parameterized	Help for feature: This project is parameterized
+String Parameter
+[Help]
+ 	Name	
+BRANCH
+Help for feature: Name
+ 	Default Value	
+Help for feature: Default Value
+ 	Description	
+Jira ticket number passed from previous step
+[Plain text] Preview 	Help for feature: Description
+ 		Trim the string	Help for feature: This project is parameterized
+Delete
+Add Parameter
+Throttle Concurrent Builds	
+Throttle builds	Help for feature: Throttle builds
+Prepare an environment for the run	Help for feature: Prepare an environment for the run
+Disable this project	Help for feature: Disable this project
+Execute concurrent builds if necessary	Help for feature: Execute concurrent builds if necessary
+Restrict where this project can be run	Help for feature: Restrict where this project can be run
+ 	Label Expression	
+operations-dms-jenkins-build
+Help for feature: Label Expression
+Label operations-dms-jenkins-build is serviced by no nodes and 1 cloud. Permissions or other restrictions provided by plugins may prevent this job from running on those nodes.
+ 
+Advanced...
+Source Code Management
+ None	
+ Git	
+ Subversion	Help for feature: Subversion
+Build Triggers
+Trigger builds remotely (e.g., from scripts)	Help for feature: Trigger builds remotely (e.g., from scripts)
+Build after other projects are built	Help for feature: Build after other projects are built
+Build periodically	Help for feature: Build periodically
+Build when a change is pushed to GitLab. GitLab webhook URL: https://jenkins00.ad.inseego.com/project/02-test-magenta-build-and-test	Help for feature: Build when a change is pushed to GitLab. GitLab webhook URL: https://jenkins00.ad.inseego.com/project/02-test-magenta-build-and-test
+Generic Webhook Trigger	Help for feature: Generic Webhook Trigger
+GitHub hook trigger for GITScm polling	Help for feature: GitHub hook trigger for GITScm polling
+Poll SCM	Help for feature: Poll SCM
+Build Environment
+Delete workspace before build starts	
+ 
+Advanced...
+Use secret text(s) or file(s)	Help for feature: Use secret text(s) or file(s)
+Provide Configuration files	Help for feature: Provide Configuration files
+Abort the build if it's stuck	
+Add timestamps to the Console Output	
+Create AWS Cloud Formation stack	Help for feature: Create AWS Cloud Formation stack
+Execute shell script on remote host using ssh	Help for feature: Execute shell script on remote host using ssh
+Generate Release Notes	
+Inject environment variables to the build process	Help for feature: Inject environment variables to the build process
+Inject passwords to the build as environment variables	
+With Ant	Help for feature: With Ant
+Build
+Execute shell
+[Help]
+ 	Command	
+# Enable EPEL
+sudo sed -i 's/enabled=0/enabled=1/' /etc/yum.repos.d/epel.repo
+ 
+# Install nodejs
+curl -sL https://rpm.nodesource.com/setup_12.x | sudo bash -
+sudo yum install -y nodejs
+ 
+# Parameters
+export API_ENV=test
+export API_NAME=magenta
+export STACK_NAME="${API_ENV}-${API_NAME}"
+export BUCKET="${STACK_NAME}"
+export PARAMETER_FILE="MagentaLaunchParameters.json"
+export STACK_VERSION="${BRANCH}"
+export CAPABILITIES="CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
+export TEMPLATE_URL="https://s3-us-gov-west-1.amazonaws.com/${BUCKET}/release/cloudformation/templates/main.template"
+export DEV_ACCESS_KEY=N2FqMUFtSXE1Vmk2RHBIbms0NFNaUncwRENBQWxuWGU6RXJ0UkVrUUFiNHRsd3FBaA==
+export PROD_ACCESS_KEY=UDFRVHhaMWdhZ1ZoSUtOZTlWWHlkeUx1R255eW9hTFg6R1l6M0FBM3VCQmwxU09sUg==
+export ACCESS_KEY=${PROD_ACCESS_KEY}
+export PUBLIC_KEY_TTL=1
+export CONFIG_BUCKET=${BUCKET}
+export CONFIG_KEY=config.json
+export TEST_CONFIG=config.${API_ENV}.json
+export IS_PROD_BUILD=1
+export RUN_CACHE_REFRESH=true
+ 
+# Unzip application
+FILENAME="src.zip"
+/usr/bin/aws s3api get-object --bucket ${BUCKET} --key source/${FILENAME} ${FILENAME} --region us-gov-west-1
+unzip ${FILENAME} -d src
+ 
+# Unzip cloudformation
+FILENAME="cloudformation.zip"
+/usr/bin/aws s3api get-object --bucket ${BUCKET} --key source/${FILENAME} ${FILENAME} --region us-gov-west-1
+unzip ${FILENAME} -d cloudformation
+ 
+# Unzip smoke tests
+FILENAME="smoke_tests.zip"
+/usr/bin/aws s3api get-object --bucket ${BUCKET} --key source/${FILENAME} ${FILENAME} --region us-gov-west-1
+unzip ${FILENAME} -d smoke_tests
+ 
+# run coverage tests
+sed -i 's/us-east-2/us-gov-west-1/g' ./src/${TEST_CONFIG}
+#sed -i 's/us-east-2/us-gov-west-1/g' ./src/${CONFIG_KEY}
+#sed -i 's/us-east-2/us-gov-west-1/g' ./src/Apigee.test.js
+#sed -i 's/"dev-apigee"/process.env.CONFIG_BUCKET/g' ./src/Apigee.test.js
+cd src
+npm install jest
+set +e
+npm run test -- --coverage --silent > ../coverage_tests.txt 2>&1
+#npm run test -- --coverage > ../coverage_tests.txt 2>&1
+FAILURE=$?
+echo "COVERAGE=$(cat ../coverage_tests.txt)" | sed ':a;N;$!ba;s/\n/\\n/g' > ../coverage_tests.env
+set -e
+cd ..
+exit ${FAILURE}
+See the list of available environment variables	
+One or more fields in this block have been edited. 
+Advanced...
+Delete
+Conditional steps (multiple)
+ 		
+ 	Run?		Help for feature: Run?
+ 	Worst status		Help for feature: Worst status
+ 	Best status		Help for feature: Best status
+ 
+Advanced...
+
+Steps to run if condition is met
+Inject environment variables
+[Help]
+ 	Properties File Path	
+coverage_tests.env
+Help for feature: Properties File Path
+ 	Properties Content	
+Help for feature: Properties Content
+Delete
+JIRA: Progress issues by workflow action
+[Help]
+ 	JQL Query	
+issueKey = ${BRANCH}
+Help for feature: JQL Query
+ 	Workflow Action	
+QA Fix
+Help for feature: Workflow Action
+ 	Comment	
+{code:title=One or more coverage tests failed, please address failures and resubmit for testing.|linenumbers=true|firstline=0001|collapse=true}
+${COVERAGE}
+{code}
+Help for feature: Comment
+Delete
+Add step to condition
+Delete
+Execute shell
+[Help]
+ 	Command	
+# Parameters
+export API_ENV=test
+export API_NAME=magenta
+export STACK_NAME="${API_ENV}-${API_NAME}"
+export BUCKET="${STACK_NAME}"
+export PARAMETER_FILE="MagentaLaunchParameters.json"
+export STACK_VERSION="${BRANCH}"
+export CAPABILITIES="CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
+export TEMPLATE_URL="https://s3-us-gov-west-1.amazonaws.com/${BUCKET}/release/cloudformation/templates/main.template"
+export DEV_ACCESS_KEY=N2FqMUFtSXE1Vmk2RHBIbms0NFNaUncwRENBQWxuWGU6RXJ0UkVrUUFiNHRsd3FBaA==
+export PROD_ACCESS_KEY=UDFRVHhaMWdhZ1ZoSUtOZTlWWHlkeUx1R255eW9hTFg6R1l6M0FBM3VCQmwxU09sUg==
+export ACCESS_KEY=${PROD_ACCESS_KEY}
+export PUBLIC_KEY_TTL=1
+export CONFIG_BUCKET=${BUCKET}
+export CONFIG_KEY=config.json
+export TEST_CONFIG=config.${API_ENV}.json
+export VERSION=0.0.${BRANCH#DMS-}
+export IS_PROD_BUILD=1
+export RUN_CACHE_REFRESH=true
+ 
+echo "VERSION=${VERSION}" > version.env
+ 
+ 
+# Build application
+mkdir -p ./build/modules
+cp -r ./src/modules ./build
+cp -r ./src/Apigee.js ./src/index.js ./src/LICENSE.TXT ./src/package* ./src/shims.js ./build/
+cp ./src/${TEST_CONFIG} ./build/${CONFIG_KEY}
+ 
+ 
+cd ./build
+npm uninstall --save jest
+npm uninstall --save aws-sdk
+npm version ${VERSION} --allow-same-version
+npm install
+npm remove aws-sdk
+npm remove jest
+ 
+zip -qq -r ../Apigee.zip ./*
+ 
+cd ..
+ 
+# Build cloudformation parammeters
+ 
+node -e 'console.log(JSON.stringify([{"ParameterKey":"pRestApiName","ParameterValue":"'${API_NAME}'"},{"ParameterKey":"pEnvironment","ParameterValue":"'${API_ENV}'"},{"ParameterKey":"pS3CodeBucket","ParameterValue":"'${BUCKET}'"},{"ParameterKey":"pS3Key","ParameterValue":"release/Apigee.zip"},{"ParameterKey":"pBearerAccessKey","ParameterValue":"'${PROD_ACCESS_KEY}'"},{"ParameterKey":"pConfigBucket","ParameterValue":"'${BUCKET}'"},{"ParameterKey":"pConfigKey","ParameterValue":"config.json"},{"ParameterKey":"pPublicKeyTTL","ParameterValue":"1"},{"ParameterKey":"pCloudFormationVersion","ParameterValue":"'${VERSION}'"},{"ParameterKey": "pVPCId","ParameterValue": "vpc-d0d495b4"},{"ParameterKey": "pSecurityGroups","ParameterValue": "sg-518df737"},{"ParameterKey": "pSubnets","ParameterValue": "subnet-72023d16,subnet-3d7d464b"},{"ParameterKey":"pDomainName","ParameterValue": "test-magenta.tmorders.com"},{"ParameterKey":"pCertificateArn","ParameterValue":"arn:aws-us-gov:acm:us-gov-west-1:797897514983:certificate/946ccf5d-1ed4-434c-b54f-3faaced3bd84"}], null, 4));' > ${PARAMETER_FILE}
+ 
+# Upload application to S3
+/usr/bin/aws s3api put-object --bucket ${BUCKET} --key release/Apigee.zip --body Apigee.zip --metadata "{\"version\":\"$BRANCH\"}" --region us-gov-west-1
+/usr/bin/aws s3api put-object --bucket ${BUCKET} --key config.json --body ./build/config.json --metadata "{\"version\":\"$BRANCH\"}" --region us-gov-west-1
+/usr/bin/aws s3api put-object --bucket ${BUCKET} --key release/cloudformation/templates/main.template --body ./cloudformation/magenta/templates/main.template --metadata "{\"version\":\"$BRANCH\"}" --region us-gov-west-1
+/usr/bin/aws s3api put-object --bucket ${BUCKET} --key release/cloudformation/templates/${PARAMETER_FILE} --body ${PARAMETER_FILE} --metadata "{\"version\":\"$BRANCH\"}" --region us-gov-west-1
+ 
+# Create cloudformation stack
+/usr/bin/aws s3api get-object --bucket ${BUCKET} --key release/cloudformation/templates/${PARAMETER_FILE} ${PARAMETER_FILE} --region us-gov-west-1
+/usr/bin/aws cloudformation delete-stack --stack-name ${STACK_NAME}-${STACK_VERSION} --region us-gov-west-1
+/usr/bin/aws cloudformation wait stack-delete-complete --stack-name ${STACK_NAME}-${STACK_VERSION} --region us-gov-west-1
+/usr/bin/aws cloudformation create-stack --capabilities ${CAPABILITIES} --stack-name ${STACK_NAME}-${STACK_VERSION} --template-url ${TEMPLATE_URL} --parameters file://${PARAMETER_FILE} --region us-gov-west-1 --disable-rollback
+/usr/bin/aws cloudformation wait stack-create-complete --stack-name ${STACK_NAME}-${STACK_VERSION} --region us-gov-west-1
+ 
+# Deploy Lambda (may be redundant)
+/usr/bin/aws lambda update-function-code --function-name ${API_ENV}_${API_NAME}_lambda --s3-bucket ${BUCKET} --s3-key release/Apigee.zip --publish --region us-gov-west-1
+ 
+# run smoke tests
+export API_URL=$(aws cloudformation describe-stacks --stack-name ${STACK_NAME}-${STACK_VERSION} --region us-gov-west-1 --query "Stacks[].Outputs[?OutputKey=='RestApiUrl'].OutputValue" --output text)
+export API_KEY_ID=$(aws cloudformation describe-stacks --stack-name ${STACK_NAME}-${STACK_VERSION} --region us-gov-west-1 --query "Stacks[].Outputs[?OutputKey=='RestApiKeyId'].OutputValue" --output text) 
+export API_KEY=$(aws apigateway get-api-key --api-key ${API_KEY_ID} --region us-gov-west-1 --include-value --query value --output text)
+ 
+cd smoke_tests
+npm install
+set +e
+npm run test -- --coverage --silent > ../smoke_tests.txt 2>&1
+FAILURE=$?
+echo "SMOKEY=$(cat ../smoke_tests.txt)" | sed ':a;N;$!ba;s/\n/\\n/g' > ../smoke_tests.env
+set -e
+cd ..
+ 
+# delete the stack
+#/usr/bin/aws cloudformation delete-stack --stack-name ${STACK_NAME}-${STACK_VERSION} --region us-gov-west-1
+ 
+exit ${FAILURE}
+See the list of available environment variables	
+One or more fields in this block have been edited. 
+Advanced...
+Delete
+Conditional steps (multiple)
+ 		
+ 	Run?		Help for feature: Run?
+ 	Worst status		Help for feature: Worst status
+ 	Best status		Help for feature: Best status
+ 
+Advanced...
+
+Steps to run if condition is met
+Inject environment variables
+[Help]
+ 	Properties File Path	
+smoke_tests.env
+Help for feature: Properties File Path
+ 	Properties Content	
+Help for feature: Properties Content
+Delete
+JIRA: Progress issues by workflow action
+[Help]
+ 	JQL Query	
+issuekey = ${BRANCH}
+Help for feature: JQL Query
+ 	Workflow Action	
+QA Fix
+Help for feature: Workflow Action
+ 	Comment	
+{code:title=One or more smoke tests failed, please address failures and resubmit for testing.|linenumbers=true|firstline=0001|collapse=true}
+${SMOKEY}
+{code}
+Help for feature: Comment
+Delete
+Add step to condition
+Delete
+Conditional steps (multiple)
+ 		
+ 	Run?		Help for feature: Run?
+ 	Worst status		Help for feature: Worst status
+ 	Best status		Help for feature: Best status
+ 
+Advanced...
+
+Steps to run if condition is met
+Inject environment variables
+[Help]
+ 	Properties File Path	
+coverage_tests.env
+Help for feature: Properties File Path
+ 	Properties Content	
+Help for feature: Properties Content
+Delete
+Inject environment variables
+[Help]
+ 	Properties File Path	
+smoke_tests.env
+Help for feature: Properties File Path
+ 	Properties Content	
+Help for feature: Properties Content
+Delete
+JIRA: Progress issues by workflow action
+[Help]
+ 	JQL Query	
+issuekey = ${BRANCH}
+Help for feature: JQL Query
+ 	Workflow Action	
+Passed; Not Merged
+Help for feature: Workflow Action
+ 	Comment	
+{code:title=Coverage tests passed.|linenumbers=true|firstline=0001|collapse=true}
+${COVERAGE}
+{code}
+----
+{code:title=Smoke tests passed.|linenumbers=true|firstline=0001|collapse=true}
+${SMOKEY}
+{code}
+Help for feature: Comment
+Delete
+Add step to condition
+Delete
+Inject environment variables
+[Help]
+ 	Properties File Path	
+version.env
+Help for feature: Properties File Path
+ 	Properties Content	
+Help for feature: Properties Content
+Delete
+Add build step
+Post-build Actions
+Add post-build action
