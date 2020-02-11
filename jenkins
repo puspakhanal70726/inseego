@@ -1,0 +1,316 @@
+	Description	
+Checks out git branch, checks for merge conflicts, zips to s3, then calls the next step
+[Plain text] Preview 	
+ 	JIRA site		
+Block build when upstream project is building - final project	Help for feature: Block build when upstream project is building - final project
+Block build when downstream project is building - final project	Help for feature: Block build when downstream project is building - final project
+Discard old builds	Help for feature: Discard old builds
+ 	Strategy		
+ 	Days to keep builds	
+if not empty, build records are only kept up to this number of days	
+ 	Max # of builds to keep	
+3
+if not empty, only up to this number of build records are kept	
+ 
+Advanced...
+GitHub project	
+ 	GitLab Connection		
+Permission to Copy Artifact	
+This build requires lockable resources	
+Restrict build execution causes	Help for feature: Restrict build execution causes
+This project is parameterized	Help for feature: This project is parameterized
+String Parameter
+[Help]
+ 	Name	
+BRANCH
+Help for feature: Name
+ 	Default Value	
+Help for feature: Default Value
+ 	Description	
+DMS Jira ticket number that has related branch in git
+[Plain text] Preview 	Help for feature: Description
+ 		Trim the string	Help for feature: This project is parameterized
+Delete
+Add Parameter
+Throttle Concurrent Builds	
+Throttle builds	Help for feature: Throttle builds
+Prepare an environment for the run	Help for feature: Prepare an environment for the run
+Disable this project	Help for feature: Disable this project
+Execute concurrent builds if necessary	Help for feature: Execute concurrent builds if necessary
+Restrict where this project can be run	Help for feature: Restrict where this project can be run
+ 
+Advanced...
+Source Code Management
+ None	
+ Git	
+ 	Repositories	
+ 	Repository URL	
+git@nvtlsdsgitprd.nvtl.local:magenta/serveless_magenta.git
+Help for feature: Repository URL
+ 	Credentials	
+ 
+ Add
+One or more fields in this block have been edited. 
+Advanced...
+ 		
+Add Repository
+Help for feature: Repositories
+ 	Branches to build	
+ 	Branch Specifier (blank for 'any')	
+${BRANCH}
+Help for feature: Branch Specifier (blank for 'any')
+ 		
+Add Branch
+Delete Branch
+ 	Repository browser		Help for feature: Repository browser
+ 	Additional Behaviours	
+Check out to a sub-directory
+ 	Local subdirectory for repo	
+magenta
+Help for feature: Local subdirectory for repo
+Delete
+Advanced clone behaviours
+ 	Fetch tags		Help for feature: Fetch tags
+ 	Honor refspec on initial clone		Help for feature: Honor refspec on initial clone
+ 	Shallow clone		Help for feature: Shallow clone
+ 	Shallow clone depth	
+0
+Help for feature: Shallow clone depth
+ 	Path of the reference repo to use during clone	
+Help for feature: Path of the reference repo to use during clone
+ 	Timeout (in minutes) for clone and fetch operations	
+Help for feature: Timeout (in minutes) for clone and fetch operations
+Delete
+Add
+ Subversion	Help for feature: Subversion
+Build Triggers
+Trigger builds remotely (e.g., from scripts)	Help for feature: Trigger builds remotely (e.g., from scripts)
+Build after other projects are built	Help for feature: Build after other projects are built
+Build periodically	Help for feature: Build periodically
+Build when a change is pushed to GitLab. GitLab webhook URL: https://jenkins00.ad.inseego.com/project/01-test-magenta-source	Help for feature: Build when a change is pushed to GitLab. GitLab webhook URL: https://jenkins00.ad.inseego.com/project/01-test-magenta-source
+Generic Webhook Trigger	Help for feature: Generic Webhook Trigger
+Is triggered by HTTP requests to http://JENKINS_URL/generic-webhook-trigger/invoke
+
+There are example configurations in the Git repository.
+
+You can fiddle with JSONPath here. You may also want to checkout the syntax here.
+
+You can fiddle with XPath here. You may also want to checkout the syntax here.
+
+You can fiddle with regular expressions here. You may also want to checkout the syntax here.
+
+If your job is not parameterized, then the resolved variables will just be contributed to the build. If your job is parameterized, and you resolve variables that have the same name as those parameters, then the plugin will populate the parameters when triggering job. That means you can, for example, use the parameters in combination with an SCM plugin, like GIT Plugin, to pick a branch.
+
+ 	Post content parameters	
+Add
+If you want value of param1 from post content { "param1": "value1" } to be contributed, you need to add $.param1 here.	
+ 	Header parameters	
+Add
+If you want value of header param1 to be contributed, you need to add "param1" here.	
+ 	Request parameters	
+ 	Request parameter	
+BRANCH
+Name of request parameter	
+ 	Value filter	
+Optional. Anything in the evaluated value, matching this regular expression, will be removed. Having [^0-9] would only allow numbers. The regexp syntax is documented here.	
+ 		
+Delete
+Add
+If you want value of query parameter param1 to be contributed, you need to add "param1" here.	
+ 	Token	
+3fe50075bae57cac561beb28c836687c-test-magenta
+Optional token. If it is specified then this job can only be triggered if that token is supplied when invoking http://JENKINS_URL/generic-webhook-trigger/invoke. It can be supplid as a:
+Query parameter /invoke?token=TOKEN_HERE
+A token header token: TOKEN_HERE
+A Authorization: Bearer header Authorization: Bearer TOKEN_HERE
+ 	Cause	
+Generic Cause
+This will be displayed in any triggered job. You can use the variables here to create a custom cause like "$name committed to $branch", if you have configured variables named name and branch.	
+ 	Silent response	
+Avoid responding with information about triggered jobs.	
+ 	Print post content	
+Print post content in job log.	
+ 	Print contributed variables	
+Print contributed variables in job log.	
+Optional filter
+ 	Expression	
+Regular expression to test on the evaluated text specified below. The regexp syntax is documented here.	
+ 	Text	
+Text to test for the given expression. You can use any combination of the variables you configured above.	
+This is an optional feature. If specified, this job will only trigger when given expression matches given text.	
+GitHub hook trigger for GITScm polling	Help for feature: GitHub hook trigger for GITScm polling
+Poll SCM	Help for feature: Poll SCM
+Build Environment
+Delete workspace before build starts	
+ 
+Advanced...
+Use secret text(s) or file(s)	Help for feature: Use secret text(s) or file(s)
+Provide Configuration files	Help for feature: Provide Configuration files
+Abort the build if it's stuck	
+Add timestamps to the Console Output	
+Create AWS Cloud Formation stack	Help for feature: Create AWS Cloud Formation stack
+Execute shell script on remote host using ssh	Help for feature: Execute shell script on remote host using ssh
+Generate Release Notes	
+Inject environment variables to the build process	Help for feature: Inject environment variables to the build process
+Inject passwords to the build as environment variables	
+With Ant	Help for feature: With Ant
+Build
+JIRA: Progress issues by workflow action
+[Help]
+ 	JQL Query	
+issuekey = ${BRANCH}
+Help for feature: JQL Query
+ 	Workflow Action	
+Test in Progress
+Help for feature: Workflow Action
+ 	Comment	
+Beginning tests for ${BRANCH}
+Help for feature: Comment
+Delete
+Execute shell
+[Help]
+ 	Command	
+cd magenta
+git config user.email "jenkins00@inseego.com"
+git config user.name "jenkins00"
+set +e
+git merge origin/master --no-ff --no-commit > ../merge_attempt.txt 2>&1
+FAILURE=$?
+echo "MERGE=$(cat ../merge_attempt.txt)" | sed ':a;N;$!ba;s/\n/\\n/g' > ../merge_attempt.env
+set -e
+cd ..
+exit ${FAILURE}
+ 
+ 
+See the list of available environment variables	
+One or more fields in this block have been edited. 
+Advanced...
+Delete
+Conditional steps (multiple)
+ 		
+ 	Run?		Help for feature: Run?
+ 	Worst status		Help for feature: Worst status
+ 	Best status		Help for feature: Best status
+ 
+Advanced...
+
+Steps to run if condition is met
+Inject environment variables
+[Help]
+ 	Properties File Path	
+merge_attempt.env
+Help for feature: Properties File Path
+ 	Properties Content	
+Help for feature: Properties Content
+Delete
+JIRA: Progress issues by workflow action
+[Help]
+ 	JQL Query	
+issuekey = ${BRANCH}
+Help for feature: JQL Query
+ 	Workflow Action	
+QA Fix
+Help for feature: Workflow Action
+ 	Comment	
+Testing mergeability with master branch.
+
+${MERGE}
+Help for feature: Comment
+Delete
+Add step to condition
+Delete
+Execute shell
+[Help]
+ 	Command	
+# Create zip archive
+cd ./magenta/src/
+zip -r ../../src.zip ./*
+cd ../cloudformation
+zip -r ../../cloudformation.zip ./*
+cd ../smoke_tests
+zip -r ../../smoke_tests.zip ./*
+export BUCKET=test-magenta
+ 
+ 
+See the list of available environment variables	
+ 
+Advanced...
+Delete
+Conditional step (single)
+[Help]
+ 		
+ 	Run?		Help for feature: Run?
+ 	Worst status		Help for feature: Worst status
+ 	Best status		Help for feature: Best status
+ 
+Advanced...
+ 		
+ 	Builder		
+ 	JQL Query	
+issuekey = ${BRANCH}
+Help for feature: JQL Query
+ 	Workflow Action	
+QA Fix
+Help for feature: Workflow Action
+ 	Comment	
+Build failed moving artifacts to S3.
+Help for feature: Comment
+Delete
+Add build step
+Post-build Actions
+Publish artifacts to S3 Bucket
+[Help]
+ 	S3 profile		
+ 	Files to upload	
+ 	Source	
+**/*.zip
+Help for feature: Source
+ 	Exclude	
+ 	Destination bucket	
+test-magenta/source
+Help for feature: Destination bucket
+ 	Storage class		
+ 	Bucket Region		Help for feature: Bucket Region
+ 	No upload on build failure		Help for feature: No upload on build failure
+ 	Publish from Slave		Help for feature: Publish from Slave
+ 	Manage artifacts		Help for feature: Manage artifacts
+ 	Server side encryption		Help for feature: Server side encryption
+ 	Flatten directories		Help for feature: Flatten directories
+ 	GZIP files		Help for feature: GZIP files
+ 	Keep files forever		Help for feature: Keep files forever
+ 	Show content directly in browser		Help for feature: Show content directly in browser
+ 	Metadata tags	
+ 	Metadata key	
+version
+Help for feature: Metadata key
+ 	Metadata value	
+$BRANCH
+Help for feature: Metadata value
+ 		
+Delete
+Add
+ 		
+Delete
+Add
+ 	Metadata tags	
+Add
+ 	Publish Failure Result Constraint		
+ 		Don't wait for completion of concurrent builds before publishing to S3	Help for feature: 
+ 	Build console log level		Help for feature: Build console log level
+Delete
+Trigger parameterized build on other projects
+[Help]
+ 	Build Triggers	
+ 	Projects to build	
+02-test-magenta-build-and-test
+Help for feature: Projects to build
+ 	Trigger when build is		Help for feature: Trigger when build is
+ 	Trigger build without parameters		Help for feature: Trigger build without parameters
+Current build parameters
+ 			Help for feature: Build Triggers
+Delete
+Add Parameters
+ 		
+Add trigger...
+Delete
+Add post-build action
