@@ -1,0 +1,192 @@
+Description	
+Checks out git branch, checks for merge conflicts, zips to s3, then calls the next step
+[Plain text] Preview 	
+ 	JIRA site		
+Block build when upstream project is building - final project	Help for feature: Block build when upstream project is building - final project
+Block build when downstream project is building - final project	Help for feature: Block build when downstream project is building - final project
+Discard old builds	Help for feature: Discard old builds
+ 	Strategy		
+ 	Days to keep builds	
+if not empty, build records are only kept up to this number of days	
+ 	Max # of builds to keep	
+3
+if not empty, only up to this number of build records are kept	
+ 
+Advanced...
+GitHub project	
+ 	GitLab Connection		
+Permission to Copy Artifact	
+This build requires lockable resources	
+Restrict build execution causes	Help for feature: Restrict build execution causes
+This project is parameterized	Help for feature: This project is parameterized
+String Parameter
+[Help]
+ 	Name	
+BRANCH
+Help for feature: Name
+ 	Default Value	
+Help for feature: Default Value
+ 	Description	
+DMS Jira ticket number that has related branch in git
+[Plain text] Preview 	Help for feature: Description
+ 		Trim the string	Help for feature: This project is parameterized
+Delete
+String Parameter
+[Help]
+ 	Name	
+VERSION
+Help for feature: Name
+ 	Default Value	
+Help for feature: Default Value
+ 	Description	
+version for the code
+[Plain text] Preview 	Help for feature: Description
+ 		Trim the string	Help for feature: This project is parameterized
+Delete
+Add Parameter
+Throttle Concurrent Builds	
+Throttle builds	Help for feature: Throttle builds
+Prepare an environment for the run	Help for feature: Prepare an environment for the run
+Disable this project	Help for feature: Disable this project
+Execute concurrent builds if necessary	Help for feature: Execute concurrent builds if necessary
+Restrict where this project can be run	Help for feature: Restrict where this project can be run
+ 
+Advanced...
+Source Code Management
+ None	
+ Git	
+ 	Repositories	
+ 	Repository URL	
+git@nvtlsdsgitprd.nvtl.local:magenta/serveless_magenta.git
+Help for feature: Repository URL
+ 	Credentials	
+ 
+ Add
+One or more fields in this block have been edited. 
+Advanced...
+ 		
+Add Repository
+Help for feature: Repositories
+ 	Branches to build	
+ 	Branch Specifier (blank for 'any')	
+${BRANCH}
+Help for feature: Branch Specifier (blank for 'any')
+ 		
+Add Branch
+Delete Branch
+ 	Repository browser		Help for feature: Repository browser
+ 	Additional Behaviours	
+Advanced clone behaviours
+ 	Fetch tags		Help for feature: Fetch tags
+ 	Honor refspec on initial clone		Help for feature: Honor refspec on initial clone
+ 	Shallow clone		Help for feature: Shallow clone
+ 	Shallow clone depth	
+0
+Help for feature: Shallow clone depth
+ 	Path of the reference repo to use during clone	
+Help for feature: Path of the reference repo to use during clone
+ 	Timeout (in minutes) for clone and fetch operations	
+Help for feature: Timeout (in minutes) for clone and fetch operations
+Delete
+Merge before build
+[Help]
+ 	Name of repository	
+origin
+Help for feature: Name of repository
+ 	Branch to merge to	
+master
+Help for feature: Branch to merge to
+ 	Merge strategy		Help for feature: Merge strategy
+ 	Fast-forward mode		Help for feature: Fast-forward mode
+Delete
+Custom user name/e-mail address
+ 	user.name	
+jenkins00
+Help for feature: user.name
+ 	user.email	
+jenkins00@inseego.com
+Help for feature: user.email
+Delete
+Add
+ Subversion	Help for feature: Subversion
+Build Triggers
+Trigger builds remotely (e.g., from scripts)	Help for feature: Trigger builds remotely (e.g., from scripts)
+Build after other projects are built	Help for feature: Build after other projects are built
+Build periodically	Help for feature: Build periodically
+Build when a change is pushed to GitLab. GitLab webhook URL: https://jenkins00.ad.inseego.com/project/03-merge-to-master	Help for feature: Build when a change is pushed to GitLab. GitLab webhook URL: https://jenkins00.ad.inseego.com/project/03-merge-to-master
+Generic Webhook Trigger	Help for feature: Generic Webhook Trigger
+GitHub hook trigger for GITScm polling	Help for feature: GitHub hook trigger for GITScm polling
+Poll SCM	Help for feature: Poll SCM
+Build Environment
+Delete workspace before build starts	
+ 
+Advanced...
+Use secret text(s) or file(s)	Help for feature: Use secret text(s) or file(s)
+Provide Configuration files	Help for feature: Provide Configuration files
+Abort the build if it's stuck	
+Add timestamps to the Console Output	
+Create AWS Cloud Formation stack	Help for feature: Create AWS Cloud Formation stack
+Execute shell script on remote host using ssh	Help for feature: Execute shell script on remote host using ssh
+Generate Release Notes	
+Inject environment variables to the build process	Help for feature: Inject environment variables to the build process
+Inject passwords to the build as environment variables	
+With Ant	Help for feature: With Ant
+Build
+JIRA: Progress issues by workflow action
+[Help]
+ 	JQL Query	
+issueKey = ${BRANCH}
+Help for feature: JQL Query
+ 	Workflow Action	
+Ready for Release
+Help for feature: Workflow Action
+ 	Comment	
+Help for feature: Comment
+Delete
+Add build step
+Post-build Actions
+Git Publisher
+[Help]
+ 	Push Only If Build Succeeds		Help for feature: Push Only If Build Succeeds
+ 	Merge Results		Help for feature: Merge Results
+If pre-build merging is configured, push the result back to the origin	
+ 	Force Push		
+Add force option to git push	
+ 	Tags	
+
+ 	Tag to push	
+${VERSION}
+ 	Tag message	
+ 	Create new tag		
+ 	Update new tag		
+ 	Target remote name	
+origin
+Delete Tag
+Add Tag
+Help for feature: Tags
+Tags to push to remote repositories	
+ 	Branches	
+Add Branch
+Help for feature: Branches
+Branches to push to remote repositories	
+ 	Notes	
+Add Note
+Help for feature: Notes
+Notes to push to remote repositories	
+Delete
+Trigger parameterized build on other projects
+[Help]
+ 	Build Triggers	
+ 	Projects to build	
+04-prod-magenta-retrieve-source,04-dev-magenta-retrieve-source
+Help for feature: Projects to build
+ 	Trigger when build is		Help for feature: Trigger when build is
+ 	Trigger build without parameters		Help for feature: Trigger build without parameters
+Current build parameters
+ 			Help for feature: Build Triggers
+Delete
+Add Parameters
+ 		
+Add trigger...
+Delete
+Add post-build action
